@@ -44,27 +44,14 @@
     <!-- Key Input Section -->
     <section class="card key-section" id="key-section">
       <div class="card-header">
-        <h2>🔑 Enter Your Stripe API Keys</h2>
-        <p class="card-desc">Your keys are sent directly to Stripe's API and are never stored.</p>
+        <h2>🔑 Enter Your Stripe Secret Key</h2>
+        <p class="card-desc">Your secret key is sent directly to Stripe's API and is never stored.</p>
       </div>
       <div class="key-inputs">
         <div class="input-group">
-          <label for="pk-input">Publishable Key</label>
+          <label for="sk-input">Secret Key</label>
           <div class="input-wrapper">
-            <input type="password" id="pk-input" placeholder="pk_live_..." autocomplete="off" spellcheck="false">
-            <button class="toggle-visibility" id="pk-toggle" aria-label="Toggle visibility">
-              <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
-          </div>
-          <span class="key-hint">Optional — used to detect live/test mode</span>
-        </div>
-        <div class="input-group">
-          <label for="sk-input">Secret Key <span class="required">*</span></label>
-          <div class="input-wrapper">
-            <input type="password" id="sk-input" placeholder="sk_live_..." autocomplete="off" spellcheck="false">
+            <input type="password" id="sk-input" placeholder="sk_live_... or sk_test_..." autocomplete="off" spellcheck="false">
             <button class="toggle-visibility" id="sk-toggle" aria-label="Toggle visibility">
               <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -72,7 +59,7 @@
               </svg>
             </button>
           </div>
-          <span class="key-hint">Required — used to fetch account details from Stripe API</span>
+          <span class="key-hint">Enter your Stripe secret key to fetch full account details</span>
         </div>
       </div>
       <button class="btn-primary" id="fetch-btn">

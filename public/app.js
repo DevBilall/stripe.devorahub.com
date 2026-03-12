@@ -1,7 +1,5 @@
 // ── DOM Elements ──────────────────────────────
-const pkInput = document.getElementById('pk-input');
 const skInput = document.getElementById('sk-input');
-const pkToggle = document.getElementById('pk-toggle');
 const skToggle = document.getElementById('sk-toggle');
 const fetchBtn = document.getElementById('fetch-btn');
 const errorMsg = document.getElementById('error-msg');
@@ -20,25 +18,22 @@ function setupToggle(input, btn) {
     btn.style.color = isPassword ? 'var(--primary-light)' : 'var(--text-dim)';
   });
 }
-setupToggle(pkInput, pkToggle);
 setupToggle(skInput, skToggle);
 
-// ── Detect key mode ──────────────────────────
+// ── Detect key mode from SK ──────────────────
 function detectMode() {
-  const pk = pkInput.value.trim();
   const sk = skInput.value.trim();
-  const key = sk || pk;
 
-  if (!key) {
+  if (!sk) {
     modeBadge.className = 'mode-badge';
     modeText.textContent = 'No Key Entered';
     return;
   }
 
-  if (key.includes('_live_')) {
+  if (sk.includes('_live_')) {
     modeBadge.className = 'mode-badge live';
     modeText.textContent = 'Live Mode';
-  } else if (key.includes('_test_')) {
+  } else if (sk.includes('_test_')) {
     modeBadge.className = 'mode-badge test';
     modeText.textContent = 'Test Mode';
   } else {
@@ -47,7 +42,6 @@ function detectMode() {
   }
 }
 
-pkInput.addEventListener('input', detectMode);
 skInput.addEventListener('input', detectMode);
 
 // ── Show error ───────────────────────────────
@@ -325,8 +319,4 @@ fetchBtn.addEventListener('click', async () => {
 // ── Enter key to submit ──────────────────────
 skInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') fetchBtn.click();
-});
-
-pkInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') skInput.focus();
 });
