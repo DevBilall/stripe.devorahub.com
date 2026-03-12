@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Account Inspector</title>
+  <meta name="description" content="Securely inspect your Stripe account details, balance, and recent transactions using your API keys.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header" id="app-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="6" fill="url(#stripe-grad)"/>
+            <path d="M13.3 10.5c0-.8.7-1.1 1.7-1.1 1.5 0 3.4.5 4.9 1.3V6.4c-1.6-.7-3.3-1-4.9-1-4 0-6.7 2.1-6.7 5.6 0 5.4 7.5 4.6 7.5 6.9 0 .9-.8 1.2-1.9 1.2-1.6 0-3.8-.7-5.4-1.6v4.4c1.8.8 3.7 1.1 5.4 1.1 4.1 0 6.9-2 6.9-5.6-.1-5.9-7.5-4.8-7.5-7z" fill="#fff"/>
+            <defs><linearGradient id="stripe-grad" x1="0" y1="0" x2="28" y2="28">
+              <stop stop-color="#635BFF"/><stop offset="1" stop-color="#7C3AED"/>
+            </linearGradient></defs>
+          </svg>
+        </div>
+        <div>
+          <h1>Stripe Account Inspector</h1>
+          <p class="subtitle">Securely view your account details & balance</p>
+        </div>
+      </div>
+      <div class="mode-badge" id="mode-badge">
+        <span class="mode-dot"></span>
+        <span id="mode-text">No Key Entered</span>
+      </div>
+    </header>
+
+    <!-- Key Input Section -->
+    <section class="card key-section" id="key-section">
+      <div class="card-header">
+        <h2>🔑 Enter Your Stripe API Keys</h2>
+        <p class="card-desc">Your keys are sent directly to Stripe's API and are never stored.</p>
+      </div>
+      <div class="key-inputs">
+        <div class="input-group">
+          <label for="pk-input">Publishable Key</label>
+          <div class="input-wrapper">
+            <input type="password" id="pk-input" placeholder="pk_live_..." autocomplete="off" spellcheck="false">
+            <button class="toggle-visibility" id="pk-toggle" aria-label="Toggle visibility">
+              <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <span class="key-hint">Optional — used to detect live/test mode</span>
+        </div>
+        <div class="input-group">
+          <label for="sk-input">Secret Key <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input type="password" id="sk-input" placeholder="sk_live_..." autocomplete="off" spellcheck="false">
+            <button class="toggle-visibility" id="sk-toggle" aria-label="Toggle visibility">
+              <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <span class="key-hint">Required — used to fetch account details from Stripe API</span>
+        </div>
+      </div>
+      <button class="btn-primary" id="fetch-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        Inspect Account
+      </button>
+      <div class="error-msg" id="error-msg"></div>
+    </section>
+
+    <!-- Loading State -->
+    <section class="card loading-section" id="loading-section" style="display:none">
+      <div class="loader">
+        <div class="spinner"></div>
+        <p>Fetching account details from Stripe...</p>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <div id="results-section" style="display:none">
+      <!-- Account Info -->
+      <section class="card result-card animate-in" id="account-card">
+        <div class="card-header">
+          <h2>🏢 Account Information</h2>
+        </div>
+        <div class="info-grid" id="account-info"></div>
+      </section>
+
+      <!-- Balance -->
+      <section class="card result-card animate-in" id="balance-card">
+        <div class="card-header">
+          <h2>💰 Account Balance</h2>
+        </div>
+        <div class="balance-grid" id="balance-info"></div>
+      </section>
+
+      <!-- Stats Overview -->
+      <section class="card result-card animate-in" id="stats-card">
+        <div class="card-header">
+          <h2>📊 Quick Stats</h2>
+        </div>
+        <div class="stats-grid" id="stats-info"></div>
+      </section>
+
+      <!-- Recent Charges -->
+      <section class="card result-card animate-in" id="charges-card">
+        <div class="card-header">
+          <h2>💳 Recent Charges</h2>
+        </div>
+        <div class="table-wrapper" id="charges-info"></div>
+      </section>
+
+      <!-- Recent Payouts -->
+      <section class="card result-card animate-in" id="payouts-card">
+        <div class="card-header">
+          <h2>🏦 Recent Payouts</h2>
+        </div>
+        <div class="table-wrapper" id="payouts-info"></div>
+      </section>
+
+      <!-- Raw JSON -->
+      <section class="card result-card animate-in" id="raw-card">
+        <div class="card-header clickable" id="raw-toggle">
+          <h2>{ } Raw Account Data</h2>
+          <span class="toggle-arrow">▶</span>
+        </div>
+        <div class="raw-json-wrapper" id="raw-json-wrapper" style="display:none">
+          <pre id="raw-json"></pre>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Your keys are processed locally and sent directly to Stripe. Nothing is stored or logged.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
